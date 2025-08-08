@@ -1,5 +1,8 @@
 import pandas as pd;
 import numpy as np;
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
 
 df = pd.read_csv("https://raw.githubusercontent.com/guilhermeonrails/data-jobs/refs/heads/main/salaries.csv")
 #mostrando as primeiras linhas do DataFrame
@@ -168,3 +171,78 @@ print(dflimpo.info())  # Mostrando informações do DataFrame limpo
 print("---------------------------\n");
 dflimpo =dflimpo.assign( ano = dflimpo['ano'].astype(int))
 print(dflimpo.info())  # Verificando o tipo de dado da coluna 'ano' após a conversão
+print("---------------------------\n");
+print(dflimpo.head())  # Mostrando as primeiras linhas do DataFrame limpo após a conversão
+print("---------------------------\n");
+
+
+# Ordenando o gráfico boxplot por salário médio anual (do maior para o menor)
+ordem = dflimpo.groupby('experiencia')['salario_usd'].mean().sort_values(ascending=False).index
+
+plt.figure(figsize=(8, 5))
+sns.barplot(data=dflimpo, x='experiencia', y='salario_usd', estimator='mean', order=ordem)
+plt.title('Salário médio por nível de senioridade')
+plt.ylabel('Salário Médio (USD)')
+plt.xlabel('Senioridade')
+plt.show()
+print("---------------------------\n");
+
+plt.figure(figsize=(10, 6))
+sns.histplot(data=dflimpo, x='salario_usd', bins=30, kde=True)
+plt.title('Distribuição dos Salários Anuais em USD')
+plt.xlabel('Salário Anual (USD)')
+plt.ylabel('Frequência')
+plt.show()
+print("---------------------------\n");
+
+plt.figure(figsize=(8, 5))
+sns.boxplot(data=dflimpo, x='salario_usd' )
+plt.title('Boxplot dos Salários Anuais por Nível de Senioridade')
+plt.xlabel('Nível de Senioridade')
+plt.ylabel('Salário Anual (USD)')
+plt.show()
+print("---------------------------\n");
+
+ordem = dflimpo.groupby('experiencia')['salario_usd'].mean().sort_values(ascending=False).index
+
+plt.figure(figsize=(8, 5))
+sns.boxplot(data=dflimpo, x='experiencia', y='salario_usd', order=ordem)
+plt.title('Boxplot dos Salários Anuais por Nível de Senioridade (ordenado)')
+plt.xlabel('Nível de Senioridade')
+plt.ylabel('Salário Anual (USD)')
+plt.tight_layout()
+plt.show()
+print("---------------------------\n")
+
+
+ordem = dflimpo.groupby('experiencia')['salario_usd'].mean().sort_values(ascending=False).index
+
+plt.figure(figsize=(10, 6))
+sns.boxplot(
+    data=dflimpo,
+    x='experiencia',
+    y='salario_usd',
+    order=ordem,
+    palette='Set2'  # Paleta de cores colorida
+)
+plt.title('Boxplot Colorido dos Salários Anuais por Nível de Experiência')
+plt.xlabel('Nível de Experiência')
+plt.ylabel('Salário Anual (USD)')
+plt.tight_layout()
+plt.show()
+print("---------------------------\n")
+
+# Gráfico boxplot interativo dos salários por nível de experiência
+ordem = dflimpo.groupby('experiencia')['salario_usd'].mean().sort_values(ascending=False).index
+
+fig = px.box(
+    dflimpo,
+    x='experiencia',
+    y='salario_usd',
+    category_orders={'experiencia': list(ordem)},
+    color='experiencia',
+    title='Boxplot Interativo dos Salários Anuais por Nível de Experiência',
+    labels={'experiencia': 'Nível de Experiência', 'salario_usd': 'Salário Anual (USD)'}
+)
+fig.show()
+
